@@ -42,20 +42,23 @@ public class Cliente {
         }
     }
     //Retorna un arreglo con el nombre de las carpetas
-    String[] getCarpetas(){
-        return getArray('c');
+    ArrayList<String> getCarpetas(String dir){
+        return getArray('c',dir);
     }
     //Retorna un arreglo con el nombre de los archivos
-    String[] getArchivos(){
-        return getArray('a');
+    ArrayList<String> getArchivos(String dir){
+        return getArray('a',dir);
     }
     //Retorna un arreglo con nombre, si t='c' se estan solicitando carpetas, si t='a' se estan solicitando archivos
-    String[] getArray(char t){
-        String[] p = new String[1];
+    ArrayList<String> getArray(char t, String dir){
+        ArrayList<String> p = new ArrayList<String>();
+        System.out.println(dir);
         try{
             int i,tamano;
             boolean seguir = false;
             enviar.writeChar(t);
+            enviar.flush();
+            enviar.writeUTF(dir);
             enviar.flush();
             while(seguir==false){
                 try{
@@ -65,9 +68,8 @@ public class Cliente {
                 }
             }
             tamano = recibir.readInt();
-            p = new String[tamano];
             for(i=0;i<tamano;i++){
-                p[i] = recibir.readUTF();
+                p.add(recibir.readUTF());
             }
         }catch(IOException e){
             e.printStackTrace();

@@ -22,6 +22,7 @@ public class IniciarServidor {
               System.out.println("Cliente conectado desde "+cl.getInetAddress()+":"+cl.getPort());
               boolean terminar=false;
               char opcion=0;
+              String rutaActualizable = "";
               DataInputStream recibir = new DataInputStream(cl.getInputStream());
               DataOutputStream enviar = new DataOutputStream(cl.getOutputStream());
               while(terminar==false){
@@ -30,6 +31,10 @@ public class IniciarServidor {
                         opcion = recibir.readChar();
                         terminar = true;
                         System.out.println(opcion);
+                        rutaActualizable = recibir.readUTF();
+                        System.out.println(rutaActualizable);
+                        rutaActualizable = ruta_archivos+rutaActualizable;
+                        System.out.println(rutaActualizable);
                     }catch(Exception e){
                         terminar = false;
                     }
@@ -37,10 +42,10 @@ public class IniciarServidor {
                 terminar = false;
                 switch(opcion){
                     case 'c':
-                        enviarNombres(cl,ruta_archivos,opcion,enviar);
+                        enviarNombres(cl,rutaActualizable,opcion,enviar);
                         break;
                     case 'a':
-                        enviarNombres(cl,ruta_archivos,opcion,enviar);
+                        enviarNombres(cl,rutaActualizable,opcion,enviar);
                         break;
                     case 't':
                         terminar = true;

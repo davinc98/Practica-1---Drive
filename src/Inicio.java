@@ -10,8 +10,9 @@ import javax.swing.JPanel;
 
 public class Inicio extends javax.swing.JFrame {
     Cliente clt;
-    String[] carpetas;
-    String[] archivos;
+    private ArrayList<String> carpetas;
+    private ArrayList<String> archivos;
+    private ArrayList<String> direccion;
     
     //Estructura de archivos
     private List<JPanel> files;
@@ -23,8 +24,13 @@ public class Inicio extends javax.swing.JFrame {
     
     public Inicio() {
         clt = new Cliente();
-        carpetas = clt.getCarpetas();
-        archivos = clt.getArchivos();
+        //A direccion se anadira un nombre de carpeta cuando piquemos sobre cualquier carpeta
+        //A direccion se eliminara a su ultimo elemento cuando se pique el botón regresar, en donde si direccion esta vacia no hara nada
+        direccion = new ArrayList<String>();
+        carpetas = new ArrayList<String>();
+        archivos = new ArrayList<String>();
+        carpetas = clt.getCarpetas("");
+        archivos = clt.getArchivos("");
         initComponents();
         
         //
@@ -34,25 +40,37 @@ public class Inicio extends javax.swing.JFrame {
         contFolders = 0;
         
     }
+    private void getCarpyAr(){
+        String dir = "";
+        int i,tam;
+        tam = direccion.size();
+        i = 0;
+        while(i<tam)
+            dir = dir+direccion.get(i)+"\\";
+        carpetas.clear();
+        archivos.clear();
+        carpetas = clt.getCarpetas(dir);
+        archivos = clt.getArchivos(dir);
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        salir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         MainPanel = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        subirArchivos = new javax.swing.JButton();
+        regresar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        subiendoArchivo = new javax.swing.JLabel();
+        porcentajeSubido = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Salir");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        salir.setText("Salir");
+        salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                salirActionPerformed(evt);
             }
         });
 
@@ -61,21 +79,21 @@ public class Inicio extends javax.swing.JFrame {
         MainPanel.setLayout(new java.awt.GridLayout(0, 5));
         jScrollPane1.setViewportView(MainPanel);
 
-        jButton2.setText("Subir Archivos");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        subirArchivos.setText("Subir Archivos");
+        subirArchivos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                subirArchivosActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Regresar");
+        regresar.setText("Regresar");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setText("J-DRIVE");
 
-        jLabel2.setText("Nombre Archivo");
+        subiendoArchivo.setText("Nombre Archivo");
 
-        jLabel3.setText("Subiendo: 98%");
+        porcentajeSubido.setText("Subiendo: 98%");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,19 +105,19 @@ public class Inicio extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                                .addComponent(subiendoArchivo)
                                 .addGap(30, 30, 30)
-                                .addComponent(jLabel3)
+                                .addComponent(porcentajeSubido)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1328, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(33, 33, 33)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -107,29 +125,29 @@ public class Inicio extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(regresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
+                    .addComponent(salir)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel3)))
+                        .addComponent(subiendoArchivo)
+                        .addComponent(porcentajeSubido)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
         clt.salir();
         System.exit(0);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_salirActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void subirArchivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subirArchivosActionPerformed
         // TODO add your handling code here:
         
         JPanel contenedor = new JPanel();
@@ -151,7 +169,7 @@ public class Inicio extends javax.swing.JFrame {
         MainPanel.updateUI();
         
         contFolders++;
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_subirArchivosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,12 +208,12 @@ public class Inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MainPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel porcentajeSubido;
+    private javax.swing.JButton regresar;
+    private javax.swing.JButton salir;
+    private javax.swing.JLabel subiendoArchivo;
+    private javax.swing.JButton subirArchivos;
     // End of variables declaration//GEN-END:variables
 }
