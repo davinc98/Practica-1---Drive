@@ -2,6 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 public class Cliente {
+    
+    //jk
     Socket cl;
     DataOutputStream enviar;
     DataInputStream recibir;
