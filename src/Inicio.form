@@ -23,52 +23,66 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="pbProgreso" min="-2" pref="468" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="subiendoArchivo" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="salir" min="-2" pref="171" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="subiendoArchivo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="porcentajeSubido" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="salir" min="-2" pref="142" max="-2" attributes="0"/>
+                              <Component id="regresar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="543" max="-2" attributes="0"/>
+                              <Component id="btnDescargar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnEliminar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
+                              <Component id="subirArchivos" min="-2" pref="286" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" min="-2" pref="1328" max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" min="-2" pref="1591" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="regresar" min="-2" pref="180" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="subirArchivos" min="-2" pref="256" max="-2" attributes="0"/>
-                  </Group>
               </Group>
-              <EmptySpace pref="32" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="subirArchivos" min="-2" pref="66" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <Component id="regresar" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="regresar" min="-2" pref="66" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="subirArchivos" pref="66" max="32767" attributes="0"/>
+                          <Component id="btnEliminar" max="32767" attributes="0"/>
+                          <Component id="btnDescargar" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="619" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="750" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="salir" min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="subiendoArchivo" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="porcentajeSubido" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="salir" alignment="1" min="-2" pref="56" max="-2" attributes="0"/>
+                  <Component id="pbProgreso" alignment="0" min="-2" pref="39" max="-2" attributes="0"/>
+                  <Component id="subiendoArchivo" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -100,8 +114,10 @@
         <Container class="javax.swing.JPanel" name="MainPanel">
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-            <Property name="columns" type="int" value="5"/>
-            <Property name="rows" type="int" value="0"/>
+            <Property name="columns" type="int" value="0"/>
+            <Property name="horizontalGap" type="int" value="30"/>
+            <Property name="rows" type="int" value="3"/>
+            <Property name="verticalGap" type="int" value="30"/>
           </Layout>
         </Container>
       </SubComponents>
@@ -129,13 +145,21 @@
     </Component>
     <Component class="javax.swing.JLabel" name="subiendoArchivo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Nombre Archivo"/>
+        <Property name="text" type="java.lang.String" value="Nombre Archivo.ext"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="porcentajeSubido">
+    <Component class="javax.swing.JButton" name="btnDescargar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Subiendo: 98%"/>
+        <Property name="text" type="java.lang.String" value="Descargar"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnEliminar">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Eliminar"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JProgressBar" name="pbProgreso">
     </Component>
   </SubComponents>
 </Form>

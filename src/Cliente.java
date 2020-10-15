@@ -67,6 +67,7 @@ public class Cliente {
                     seguir = false;
                 }
             }
+            
             tamano = recibir.readInt();
             for(i=0;i<tamano;i++){
                 p.add(recibir.readUTF());

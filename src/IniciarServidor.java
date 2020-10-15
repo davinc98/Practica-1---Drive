@@ -53,6 +53,9 @@ public class IniciarServidor {
                         enviar.close();
                         cl.close();
                         break;
+                    case 's'://Subir Archivos
+                       // subirArchivos();
+                        break;
                 }
                 opcion = 0;
               }

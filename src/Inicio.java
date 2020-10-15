@@ -1,11 +1,25 @@
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.layout.Border;
+import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 public class Inicio extends javax.swing.JFrame {
@@ -13,13 +27,6 @@ public class Inicio extends javax.swing.JFrame {
     private ArrayList<String> carpetas;
     private ArrayList<String> archivos;
     private ArrayList<String> direccion;
-    
-    //Estructura de archivos
-    private List<JPanel> files;
-    private List<JPanel> folders;
-    
-    private int contFiles;
-    private int contFolders;
     
     
     public Inicio() {
@@ -29,17 +36,123 @@ public class Inicio extends javax.swing.JFrame {
         direccion = new ArrayList<String>();
         carpetas = new ArrayList<String>();
         archivos = new ArrayList<String>();
+        
         carpetas = clt.getCarpetas("");
         archivos = clt.getArchivos("");
         initComponents();
         
         //
-        files = new ArrayList<>();
-        folders = new ArrayList<>();
-        contFiles = 0;
-        contFolders = 0;
+        pbProgreso.setValue(20); //Este es un valor de muestra
+        pbProgreso.setStringPainted(true);
         
+        cargarArchivosyCarpetas();
     }
+    
+    
+    private void cargarArchivosyCarpetas(){
+        //Limpiar Panel
+        MainPanel.removeAll();
+        
+        //CARGAR ARCHIVOS
+        for(String carpeta: carpetas){
+            
+            //Contenerdor General
+            JPanel contenedor = new JPanel();
+            BorderLayout layout = new BorderLayout();
+            layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
+            contenedor.setLayout(layout);        
+
+
+            //Contenedor de BOTON  
+            JButton boton = new JButton();
+            boton.setPreferredSize(new Dimension(200,160));
+            boton.setBackground(Color.LIGHT_GRAY);
+
+            try {
+                //NO SE CARGA LA IMAGEN AIUDAAAAA https://www.youtube.com/watch?v=Zb6sAQJ-l8o
+                ImageIcon icon = new ImageIcon(getClass().getResource("/Imagenes/folder.png"));
+                int ancho = boton.getWidth();
+                int alto = boton.getHeight();
+                ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_DEFAULT));
+
+                boton.setIcon(icono);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+
+            JPanel contenedorBoton = new JPanel();
+            FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
+            contenedorBoton.setLayout(layoutBtn);
+            contenedorBoton.add(boton);
+
+
+            //Contendor CHECKBOX
+            JCheckBoxMenuItem checkRadio = new JCheckBoxMenuItem(carpeta);//NOMBRE CARPETA
+            checkRadio.setFont(new Font("Dialog",1,15));
+
+            JPanel contenedorCB = new JPanel();
+            FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
+            contenedorCB.setLayout(layoutCB);
+            contenedorCB.add(checkRadio);
+
+
+            contenedor.add(contenedorBoton, BorderLayout.CENTER);
+            contenedor.add(contenedorCB, BorderLayout.SOUTH); 
+
+            MainPanel.add(contenedor);
+        }
+        
+        //CARGAR ARCHIVOS
+        for(String archivo: archivos){
+            
+            //Contenerdor General
+            JPanel contenedor = new JPanel();
+            BorderLayout layout = new BorderLayout();
+            layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
+            contenedor.setLayout(layout);        
+
+
+            //Contenedor de BOTON  
+            JButton boton = new JButton();
+            boton.setPreferredSize(new Dimension(200,160));
+            boton.setBackground(Color.WHITE);
+
+            try {
+                //NO SE CARGA LA IMAGEN AIUDAAAAA https://www.youtube.com/watch?v=Zb6sAQJ-l8o
+                ImageIcon icon = new ImageIcon(getClass().getResource("/Imagenes/file.png"));
+                int ancho = boton.getWidth();
+                int alto = boton.getHeight();
+                ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_DEFAULT));
+
+                boton.setIcon(icono);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+
+            JPanel contenedorBoton = new JPanel();
+            FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
+            contenedorBoton.setLayout(layoutBtn);
+            contenedorBoton.add(boton);
+
+
+            //Contendor CHECKBOX
+            JCheckBoxMenuItem checkRadio = new JCheckBoxMenuItem(archivo);//NOMBRE CARPETA
+            checkRadio.setFont(new Font("Dialog",1,15));
+
+            JPanel contenedorCB = new JPanel();
+            FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
+            contenedorCB.setLayout(layoutCB);
+            contenedorCB.add(checkRadio);
+
+
+            contenedor.add(contenedorBoton, BorderLayout.CENTER);
+            contenedor.add(contenedorCB, BorderLayout.SOUTH); 
+
+            MainPanel.add(contenedor);
+        }        
+        MainPanel.updateUI();
+    }
+    
     private void getCarpyAr(){
         String dir = "";
         int i,tam;
@@ -63,7 +176,9 @@ public class Inicio extends javax.swing.JFrame {
         regresar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         subiendoArchivo = new javax.swing.JLabel();
-        porcentajeSubido = new javax.swing.JLabel();
+        btnDescargar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        pbProgreso = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -76,7 +191,7 @@ public class Inicio extends javax.swing.JFrame {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Mi Unidad", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30))); // NOI18N
 
-        MainPanel.setLayout(new java.awt.GridLayout(0, 5));
+        MainPanel.setLayout(new java.awt.GridLayout(3, 0, 30, 30));
         jScrollPane1.setViewportView(MainPanel);
 
         subirArchivos.setText("Subir Archivos");
@@ -91,51 +206,65 @@ public class Inicio extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setText("J-DRIVE");
 
-        subiendoArchivo.setText("Nombre Archivo");
+        subiendoArchivo.setText("Nombre Archivo.ext");
 
-        porcentajeSubido.setText("Subiendo: 98%");
+        btnDescargar.setText("Descargar");
+        btnDescargar.setToolTipText("");
+
+        btnEliminar.setText("Eliminar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(subiendoArchivo)
-                                .addGap(30, 30, 30)
-                                .addComponent(porcentajeSubido)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1328, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel1)
+                        .addComponent(pbProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(subiendoArchivo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(32, Short.MAX_VALUE))
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(regresar)
+                                .addGap(85, 85, 85)
+                                .addComponent(jLabel1)
+                                .addGap(543, 543, 543)
+                                .addComponent(btnDescargar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnEliminar)
+                                .addGap(69, 69, 69)
+                                .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(regresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(subirArchivos, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                            .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDescargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(salir)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(subiendoArchivo)
-                        .addComponent(porcentajeSubido)))
+                    .addComponent(salir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pbProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subiendoArchivo))
                 .addContainerGap())
         );
 
@@ -150,25 +279,8 @@ public class Inicio extends javax.swing.JFrame {
     private void subirArchivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subirArchivosActionPerformed
         // TODO add your handling code here:
         
-        JPanel contenedor = new JPanel();
-        
-        contenedor.setBackground(Color.WHITE);
-        contenedor.setPreferredSize(new Dimension(100,100));
-        
-        JButton boton = new JButton("Carpeta "+ contFolders);
-        boton.setPreferredSize(new Dimension(100,100));        
-        //Condicion si carpeta o archivo
-        
-        JLabel nombre = new JLabel("Carpeta "+contFolders);
-        
-        
-        contenedor.add(boton);
-        contenedor.add(nombre);
-        
-        MainPanel.add(contenedor);
-        MainPanel.updateUI();
-        
-        contFolders++;
+        cargarArchivosyCarpetas();
+                
     }//GEN-LAST:event_subirArchivosActionPerformed
 
     /**
@@ -208,12 +320,40 @@ public class Inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MainPanel;
+    private javax.swing.JButton btnDescargar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel porcentajeSubido;
+    private javax.swing.JProgressBar pbProgreso;
     private javax.swing.JButton regresar;
     private javax.swing.JButton salir;
     private javax.swing.JLabel subiendoArchivo;
     private javax.swing.JButton subirArchivos;
     // End of variables declaration//GEN-END:variables
 }
+
+
+
+        
+        /*EJEMPLO
+        ImageIcon imagen = new ImageIcon("folder.png");
+        JButton bt_Votar = new JButton("Votar");
+	JTextField campoVotos =new JTextField();
+	JTextField campoPorcentaje = new JTextField();
+        
+        JPanel subPanel = new JPanel();
+        
+	subPanel.setPreferredSize(new Dimension(30, 110));
+	GridLayout layoutGrid = new GridLayout(4, 1);
+	layoutGrid.setVgap(5);        
+	subPanel.setLayout(layoutGrid);
+        
+	subPanel.add(bt_Votar);
+	subPanel.add(campoVotos);
+	subPanel.add(campoPorcentaje);
+
+	JPanel panelImagen = new JPanel();
+	panelImagen.add(new JLabel(imagen));
+	subPanel.add(panelImagen);   
+        
+        MainPanel.add(subPanel);*/
