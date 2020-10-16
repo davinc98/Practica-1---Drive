@@ -7,6 +7,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.layout.Border;
@@ -15,6 +19,7 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +32,10 @@ public class Inicio extends javax.swing.JFrame {
     private ArrayList<String> carpetas;
     private ArrayList<String> archivos;
     private ArrayList<String> direccion;
+    
+    //Contiene los archivos y carpetas seleccionadas con checkbox
+    private ArrayList<String> archivosSeleccionados;
+    private ArrayList<String> carpetasSeleccionadas;
     
     
     public Inicio() {
@@ -45,6 +54,10 @@ public class Inicio extends javax.swing.JFrame {
         pbProgreso.setValue(20); //Este es un valor de muestra
         pbProgreso.setStringPainted(true);
         
+        
+        //A archivosSeleccionados se le insertaran los nombres de los archivos que se marquen con chekbox
+        archivosSeleccionados = new ArrayList<String>();
+        carpetasSeleccionadas = new ArrayList<String>();
         cargarArchivosyCarpetas();
     }
     
@@ -53,32 +66,37 @@ public class Inicio extends javax.swing.JFrame {
         //Limpiar Panel
         MainPanel.removeAll();
         
-        //CARGAR ARCHIVOS
-        for(String carpeta: carpetas){
-            
+        archivosSeleccionados.clear();
+        carpetasSeleccionadas.clear();
+        
+        //CARGAR CARPETAS
+        for(String carpeta: carpetas){            
             //Contenerdor General
             JPanel contenedor = new JPanel();
             BorderLayout layout = new BorderLayout();
             layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
-            contenedor.setLayout(layout);        
-
-
+            contenedor.setLayout(layout);  
             //Contenedor de BOTON  
-            JButton boton = new JButton();
+            JButton boton = new JButton("FOLDER");
             boton.setPreferredSize(new Dimension(200,160));
             boton.setBackground(Color.LIGHT_GRAY);
-
-            try {
+            boton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Abrir Carpeta: "+carpeta);
+                    //AGREGAR EL NOMBRE DE LA CARPETA A DIRECCION
+                }                
+            });            
+            /*try {
                 //NO SE CARGA LA IMAGEN AIUDAAAAA https://www.youtube.com/watch?v=Zb6sAQJ-l8o
                 ImageIcon icon = new ImageIcon(getClass().getResource("/Imagenes/folder.png"));
                 int ancho = boton.getWidth();
                 int alto = boton.getHeight();
                 ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_DEFAULT));
-
                 boton.setIcon(icono);
             } catch (Exception ex) {
                 System.out.println(ex);
-            }
+            }*/
 
             JPanel contenedorBoton = new JPanel();
             FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
@@ -86,58 +104,68 @@ public class Inicio extends javax.swing.JFrame {
             contenedorBoton.add(boton);
 
 
-            //Contendor CHECKBOX
-            JCheckBoxMenuItem checkRadio = new JCheckBoxMenuItem(carpeta);//NOMBRE CARPETA
+            //Contendor CHECKBOX: https://www.javatpoint.com/java-jcheckbox
+            JCheckBox  checkRadio = new JCheckBox(carpeta);//NOMBRE CARPETA
             checkRadio.setFont(new Font("Dialog",1,15));
+            checkRadio.addItemListener(new ItemListener() {    
+                @Override
+                public void itemStateChanged(ItemEvent e) {                 
+                   //label.setText("C++ Checkbox: "+ (e.getStateChange()==1?"checked":"unchecked"));
+                   if(e.getStateChange()==1){
+                       System.out.println("Carpeta Seleccionada: "+carpeta);
+                       carpetasSeleccionadas.add(carpeta);
+                   }else{
+                       System.out.println("Carpeta Deseleccionada: "+carpeta);
+                       carpetasSeleccionadas.remove(carpetasSeleccionadas.indexOf(carpeta));
+                   }
+                   System.out.println(carpetasSeleccionadas);
+                }    
+             });    
 
             JPanel contenedorCB = new JPanel();
             FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
             contenedorCB.setLayout(layoutCB);
             contenedorCB.add(checkRadio);
-
-
+            
             contenedor.add(contenedorBoton, BorderLayout.CENTER);
             contenedor.add(contenedorCB, BorderLayout.SOUTH); 
-
             MainPanel.add(contenedor);
         }
         
         //CARGAR ARCHIVOS
-        for(String archivo: archivos){
-            
+        for(String archivo: archivos){            
             //Contenerdor General
             JPanel contenedor = new JPanel();
             BorderLayout layout = new BorderLayout();
             layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
-            contenedor.setLayout(layout);        
-
-
+            contenedor.setLayout(layout);     
             //Contenedor de BOTON  
-            JButton boton = new JButton();
+            JButton boton = new JButton("FILE");
             boton.setPreferredSize(new Dimension(200,160));
             boton.setBackground(Color.WHITE);
-
-            try {
-                //NO SE CARGA LA IMAGEN AIUDAAAAA https://www.youtube.com/watch?v=Zb6sAQJ-l8o
-                ImageIcon icon = new ImageIcon(getClass().getResource("/Imagenes/file.png"));
-                int ancho = boton.getWidth();
-                int alto = boton.getHeight();
-                ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_DEFAULT));
-
-                boton.setIcon(icono);
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }
 
             JPanel contenedorBoton = new JPanel();
             FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
             contenedorBoton.setLayout(layoutBtn);
             contenedorBoton.add(boton);
 
-
             //Contendor CHECKBOX
             JCheckBoxMenuItem checkRadio = new JCheckBoxMenuItem(archivo);//NOMBRE CARPETA
             checkRadio.setFont(new Font("Dialog",1,15));
+            checkRadio.addItemListener(new ItemListener() {    
+                @Override
+                public void itemStateChanged(ItemEvent e) {                 
+                   //label.setText("C++ Checkbox: "+ (e.getStateChange()==1?"checked":"unchecked"));
+                   if(e.getStateChange()==1){
+                       System.out.println("Archivo Seleccionado: "+archivo);
+                       archivosSeleccionados.add(archivo);
+                   }else{
+                       System.out.println("Archivo Deseleccionado: "+archivo);
+                       archivosSeleccionados.remove(archivosSeleccionados.indexOf(archivo));
+                   }
+                   System.out.println(archivosSeleccionados);
+                }    
+             });  
 
             JPanel contenedorCB = new JPanel();
             FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
@@ -332,6 +360,11 @@ public class Inicio extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 }
 
+/*CONSULTAS
+    http://www.sc.ehu.es/sbweb/fisica/cursoJava/applets/diseno/flow.htm
+    https://es.stackoverflow.com/questions/130285/cambiar-tama%C3%B1o-o-estilo-de-botones-java
+
+*/
 
 
         
