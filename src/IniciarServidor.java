@@ -1,6 +1,8 @@
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IniciarServidor {
     public static void main(String[] args){
@@ -26,26 +28,23 @@ public class IniciarServidor {
               DataInputStream recibir = new DataInputStream(cl.getInputStream());
               DataOutputStream enviar = new DataOutputStream(cl.getOutputStream());
               while(terminar==false){
-                while(terminar==false){
-                    try{
-                        opcion = recibir.readChar();
-                        terminar = true;
-                        System.out.println(opcion);
-                        rutaActualizable = recibir.readUTF();
-                        System.out.println(rutaActualizable);
-                        rutaActualizable = ruta_archivos+rutaActualizable;
-                        System.out.println(rutaActualizable);
-                    }catch(Exception e){
-                        terminar = false;
-                    }
-                }
-                terminar = false;
+                opcion = recibir.readChar();
+                //System.out.println(opcion);
                 switch(opcion){
                     case 'c':
-                        enviarNombres(cl,rutaActualizable,opcion,enviar);
+                        enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
                         break;
                     case 'a':
-                        enviarNombres(cl,rutaActualizable,opcion,enviar);
+                        enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
+                        break;
+                    case 's'://Subir Archivos
+                        recibirArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
+                        break;
+                    case 'e':
+                        eliminar(dirCliente(ruta_archivos,recibir),recibir,enviar);
+                        break;
+                    case 'd':
+                        enviarArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
                         break;
                     case 't':
                         terminar = true;
@@ -53,28 +52,115 @@ public class IniciarServidor {
                         enviar.close();
                         cl.close();
                         break;
-                    case 's'://Subir Archivos
-                       // subirArchivos();
-                        break;
                 }
-                opcion = 0;
               }
-              //
-              /*int aux = recibir.readInt();
-              long recibidos;
-              int l,porcentaje;
-              while(aux>0){
-                enviar.writeBoolean(false);
-                String nombre = dis.readUTF();
-                long tam = dis.readLong();
+          }//for
+          
+      }catch(Exception e){
+          e.printStackTrace();
+      }  
+    }//main
+    //Nos retorna la ruta en que se encuentra el cliente
+    static private String dirCliente(String ruta_archivos, DataInputStream recibir){
+        String rutaActualizable = "";
+        try {
+            rutaActualizable = recibir.readUTF();
+            rutaActualizable = ruta_archivos+rutaActualizable;
+            //System.out.println("Direccion del recurso solicitado: "+rutaActualizable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rutaActualizable;
+    }
+    static void enviarArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
+        try{
+            int total = recibir.readInt();
+            File f;
+            for(int i=0;i<total;i++){
+                f = new File(rutaActualizable+recibir.readUTF());
+                if(f.isDirectory()==false){
+                    enviar(f,recibir,enviar);
+                }else{
+                    enviarDirectorio(f,recibir,enviar);
+                }
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    static void enviarDirectorio(File dir, DataInputStream recibir, DataOutputStream enviar){
+        try {
+            File[] f = dir.listFiles();
+            int i,aux = f.length;
+            enviar.writeUTF(dir.getName());
+            enviar.flush();
+            enviar.writeLong(0);
+            enviar.flush();
+            enviar.writeInt(aux);
+            for(i=0;i<aux;i++){
+                if(f[i].isDirectory()){
+                    enviarDirectorio(f[i],recibir,enviar);
+                }else{
+                    enviar(f[i],recibir,enviar);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    static void enviar(File f, DataInputStream recibir, DataOutputStream enviar){
+        String nombre,path;
+        Long tam;
+        DataInputStream dis;
+        int enviados,l,porcentaje;
+        boolean seguir;
+        try{
+            nombre = f.getName();
+            path = f.getAbsolutePath();
+            tam = f.length();
+            System.out.println("\nPreparandose pare enviar archivo "+path+" de "+tam+" bytes");
+            dis = new DataInputStream(new FileInputStream(path));
+            enviar.writeUTF(nombre);
+            enviar.flush();
+            enviar.writeLong(tam);
+            enviar.flush();
+            enviados = 0;
+            l=0;
+            porcentaje=0;
+            while(enviados<tam){
+                byte[] b = new byte[1500];
+                l=dis.read(b);
+                //System.out.print("\nEnviados: "+l);
+                enviar.write(b,0,l);
+                enviar.flush();
+                enviados = enviados + l;
+                porcentaje = (int)((enviados*100)/tam);
+                //System.out.println(", enviado el "+porcentaje+" % del archivo "+nombre);
+            }//while
+            System.out.println("Archivo "+nombre+" enviado...");
+            dis.close();//Aquí usamos flujos y Sockets bloqueantes, por ello los tenemos que cerrar
+            seguir = recibir.readBoolean();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    static void recibirArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
+        try{
+            int aux = recibir.readInt();
+            long recibidos;
+            int l,porcentaje;
+            DataOutputStream dos;
+            while(aux>0){
+                String nombre = recibir.readUTF();
+                long tam = recibir.readLong();
                 System.out.println("\nComienza descarga del archivo "+nombre+" de "+tam+" bytes");
-                DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+nombre));
+                dos = new DataOutputStream(new FileOutputStream(rutaActualizable+nombre));
                 recibidos=0;
                 l=0;
                 porcentaje=0;//l es para saber cuandos bytes se leyeron en el Socket
                 while(recibidos<tam){
                     byte[] b = new byte[1500];
-                    l = dis.read(b);
+                    l = recibir.read(b);
                     //System.out.print("\nLeidos: "+l);
                     dos.write(b,0,l);
                     dos.flush();
@@ -86,22 +172,18 @@ public class IniciarServidor {
                 dos.close();
                 aux -= 1;
                 enviar.writeBoolean(true);
-              }
-              dis.close();
-              enviar.close();*/
-          }//for
-          
-      }catch(Exception e){
-          e.printStackTrace();
-      }  
-    }//main
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
     static void enviarNombres(Socket so, String ruta, char t, DataOutputStream enviar){
         try{
             int i=0,tamano;
             boolean b = false;
             File root;
             File[] archivos;
-            ArrayList<String> nombres = new ArrayList<String>();;
+            ArrayList<String> nombres = new ArrayList<String>();
             if(t == 'c')
                 b = true;
             //Envio de las carpetas de la carpeta raiz
@@ -124,6 +206,39 @@ public class IniciarServidor {
             }
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+    static void eliminar(String dir, DataInputStream recibir, DataOutputStream enviar){
+        try{
+            int i,total = recibir.readInt();
+            boolean b,seguir;
+            b=true;
+            seguir = true;
+            File f;
+            for(i=0;i<total;i++){
+                f = new File(dir+recibir.readUTF());
+                if(f.isDirectory()==false){
+                    if(f.delete()==false){
+                        b = false;
+                    }
+                }else{
+                    borrarDirectorio(f);
+                    f.delete();
+                }
+            }
+            enviar.writeBoolean(b);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public static void borrarDirectorio (File dir){
+        File[] f = dir.listFiles();
+        int i,aux = f.length;
+        for(i=0;i<aux;i++){
+            if(f[i].isDirectory()){
+                borrarDirectorio(f[i]);
+            }
+            f[i].delete();
         }
     }
 }

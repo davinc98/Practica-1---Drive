@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.layout.Border;
@@ -21,8 +22,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -45,16 +48,12 @@ public class Inicio extends javax.swing.JFrame {
         direccion = new ArrayList<String>();
         carpetas = new ArrayList<String>();
         archivos = new ArrayList<String>();
-        
         carpetas = clt.getCarpetas("");
         archivos = clt.getArchivos("");
         initComponents();
-        
-        //
-        pbProgreso.setValue(20); //Este es un valor de muestra
+        this.pbProgreso.setValue(clt.getPorcentaje());
+        this.subiendoArchivo.setText(clt.getArchivo());
         pbProgreso.setStringPainted(true);
-        
-        
         //A archivosSeleccionados se le insertaran los nombres de los archivos que se marquen con chekbox
         archivosSeleccionados = new ArrayList<String>();
         carpetasSeleccionadas = new ArrayList<String>();
@@ -86,17 +85,9 @@ public class Inicio extends javax.swing.JFrame {
                     System.out.println("Abrir Carpeta: "+carpeta);
                     //AGREGAR EL NOMBRE DE LA CARPETA A DIRECCION
                 }                
-            });            
-            /*try {
-                //NO SE CARGA LA IMAGEN AIUDAAAAA https://www.youtube.com/watch?v=Zb6sAQJ-l8o
-                ImageIcon icon = new ImageIcon(getClass().getResource("/Imagenes/folder.png"));
-                int ancho = boton.getWidth();
-                int alto = boton.getHeight();
-                ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_DEFAULT));
-                boton.setIcon(icono);
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }*/
+            });
+            //Colocar el icono al boton del directorio
+            boton.setIcon(new ImageIcon("Imagenes/folder2.png"));
 
             JPanel contenedorBoton = new JPanel();
             FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
@@ -112,16 +103,16 @@ public class Inicio extends javax.swing.JFrame {
                 public void itemStateChanged(ItemEvent e) {                 
                    //label.setText("C++ Checkbox: "+ (e.getStateChange()==1?"checked":"unchecked"));
                    if(e.getStateChange()==1){
-                       System.out.println("Carpeta Seleccionada: "+carpeta);
+                       //System.out.println("Carpeta Seleccionada: "+carpeta);
                        carpetasSeleccionadas.add(carpeta);
                    }else{
-                       System.out.println("Carpeta Deseleccionada: "+carpeta);
+                       //System.out.println("Carpeta Deseleccionada: "+carpeta);
                        carpetasSeleccionadas.remove(carpetasSeleccionadas.indexOf(carpeta));
                    }
-                   System.out.println(carpetasSeleccionadas);
+                   //System.out.println(carpetasSeleccionadas);
                 }    
-             });    
-
+             });
+            
             JPanel contenedorCB = new JPanel();
             FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
             contenedorCB.setLayout(layoutCB);
@@ -157,16 +148,39 @@ public class Inicio extends javax.swing.JFrame {
                 public void itemStateChanged(ItemEvent e) {                 
                    //label.setText("C++ Checkbox: "+ (e.getStateChange()==1?"checked":"unchecked"));
                    if(e.getStateChange()==1){
-                       System.out.println("Archivo Seleccionado: "+archivo);
+                       //System.out.println("Archivo Seleccionado: "+archivo);
                        archivosSeleccionados.add(archivo);
                    }else{
-                       System.out.println("Archivo Deseleccionado: "+archivo);
+                       //System.out.println("Archivo Deseleccionado: "+archivo);
                        archivosSeleccionados.remove(archivosSeleccionados.indexOf(archivo));
                    }
-                   System.out.println(archivosSeleccionados);
+                   //System.out.println(archivosSeleccionados);
                 }    
-             });  
-
+             });
+            //Colocar el icono al boton del Archivo
+            //https://icons8.com/, pagina de iconos
+            String ext = archivo.substring(archivo.length()-4);
+            switch (ext) {
+                case ".png":
+                    boton.setIcon(new ImageIcon("Imagenes/png2.png"));
+                    break;
+                case ".pdf":
+                    boton.setIcon(new ImageIcon("Imagenes/pdf1.png"));
+                    break;
+                case ".jpg":
+                    boton.setIcon(new ImageIcon("Imagenes/jpg1.png"));
+                    break;
+                case "docx":
+                    boton.setIcon(new ImageIcon("Imagenes/docx1.png"));
+                    break;
+                case ".txt":
+                    boton.setIcon(new ImageIcon("Imagenes/txt1.png"));
+                    break;
+                default:
+                    boton.setIcon(new ImageIcon("Imagenes/desconocido.png"));
+                    break;
+            }
+            
             JPanel contenedorCB = new JPanel();
             FlowLayout  layoutCB = new FlowLayout();layoutBtn.setVgap(2);
             contenedorCB.setLayout(layoutCB);
@@ -182,17 +196,22 @@ public class Inicio extends javax.swing.JFrame {
     }
     
     private void getCarpyAr(){
+        String dir = dirActual();
+        carpetas.clear();
+        archivos.clear();
+        carpetas = clt.getCarpetas(dir);
+        archivos = clt.getArchivos(dir);
+    }
+    private String dirActual(){
         String dir = "";
         int i,tam;
         tam = direccion.size();
         i = 0;
         while(i<tam)
             dir = dir+direccion.get(i)+"\\";
-        carpetas.clear();
-        archivos.clear();
-        carpetas = clt.getCarpetas(dir);
-        archivos = clt.getArchivos(dir);
+        return dir;
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -238,8 +257,18 @@ public class Inicio extends javax.swing.JFrame {
 
         btnDescargar.setText("Descargar");
         btnDescargar.setToolTipText("");
+        btnDescargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescargarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -305,11 +334,50 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_salirActionPerformed
 
     private void subirArchivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subirArchivosActionPerformed
-        // TODO add your handling code here:
-        
+        String dir = dirActual();
+        JFileChooser jf = new JFileChooser();
+        jf.setMultiSelectionEnabled(true);//Para varios archivos
+        int r = jf.showOpenDialog(null);
+        //jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        //jf.setAcceptAllFileFilterUsed(false);
+        if(r==JFileChooser.APPROVE_OPTION){
+            File[] f = jf.getSelectedFiles();//, pero también necesitamos un arreglo de nombres, direcciones y de largos, además de necesitar enviar archivo por archivo y ¿cómo mandar carpetas?
+            clt.subirArchivosyCarpetas(f,dir);
+        }//if
+        this.getCarpyAr();
         cargarArchivosyCarpetas();
-                
     }//GEN-LAST:event_subirArchivosActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int respuesta = JOptionPane.showConfirmDialog(this,"Esta seguro de que desea eliminar los archivos y/o carpetas seleccionados?","Confirmar eliminacion",JOptionPane.YES_NO_OPTION);
+        if(respuesta==JOptionPane.YES_OPTION){
+            boolean b = false;
+            if(this.carpetasSeleccionadas.size()>0)
+                b = clt.eliminarCarpetas(carpetasSeleccionadas,dirActual());
+            if(b==false)
+                //Imprime error al eliminar carpetas
+                JOptionPane.showMessageDialog(null,"Ha habido un error al tratar de eliminar las carpetas seleccionadas, no se podra continuar con la operacion","Error",JOptionPane.INFORMATION_MESSAGE);
+            else if(this.archivosSeleccionados.size()>0){
+                b = clt.eliminarArchivos(archivosSeleccionados,dirActual());
+                    if(b==false)
+                        //Imprime error al eliminar archivos
+                        JOptionPane.showMessageDialog(null,"Ha habido un error al tratar de eliminar los archivos seleccionados, no se podra continuar con la operacion","Error",JOptionPane.INFORMATION_MESSAGE);
+            }
+            if(b==true)
+                //Imprime exito
+                JOptionPane.showMessageDialog(null,"La operacion para eliminar las carpetas y/o archivos seleccionados resulto exitosa","Exito",JOptionPane.INFORMATION_MESSAGE);
+        }
+        this.getCarpyAr();
+        cargarArchivosyCarpetas();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
+        if(this.carpetasSeleccionadas.size()>0)
+            clt.descargarCarpetas(carpetasSeleccionadas,dirActual());
+        if(this.archivosSeleccionados.size()>0)
+            clt.descargarArchivos(archivosSeleccionados,dirActual());
+        JOptionPane.showMessageDialog(null,"Operacion completada, los archivos y/o carpetas seleccionados se descargaron","Exito",JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_btnDescargarActionPerformed
 
     /**
      * @param args the command line arguments
