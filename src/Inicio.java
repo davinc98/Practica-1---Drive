@@ -76,9 +76,12 @@ public class Inicio extends javax.swing.JFrame {
             layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
             contenedor.setLayout(layout);  
             //Contenedor de BOTON  
-            JButton boton = new JButton("FOLDER");
+            JButton boton = new JButton();
             boton.setPreferredSize(new Dimension(200,160));
-            boton.setBackground(Color.LIGHT_GRAY);
+            //boton.setBackground(Color.WHITE);
+            boton.setContentAreaFilled(false); //QUITAR FONDO
+            boton.setBorder(null);
+            
             boton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -87,7 +90,7 @@ public class Inicio extends javax.swing.JFrame {
                 }                
             });
             //Colocar el icono al boton del directorio
-            boton.setIcon(new ImageIcon("Imagenes/folder2.png"));
+            boton.setIcon(new ImageIcon("Imagenes/folder4.png"));
 
             JPanel contenedorBoton = new JPanel();
             FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
@@ -131,9 +134,10 @@ public class Inicio extends javax.swing.JFrame {
             layout.setVgap(5);//Separacion Vert. entre elementos del contenedor
             contenedor.setLayout(layout);     
             //Contenedor de BOTON  
-            JButton boton = new JButton("FILE");
+            JButton boton = new JButton();
             boton.setPreferredSize(new Dimension(200,160));
-            boton.setBackground(Color.WHITE);
+            boton.setContentAreaFilled(false);
+            boton.setBorder(null);
 
             JPanel contenedorBoton = new JPanel();
             FlowLayout  layoutBtn = new FlowLayout();layoutBtn.setVgap(2);
