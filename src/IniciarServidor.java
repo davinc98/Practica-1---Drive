@@ -73,7 +73,7 @@ public class IniciarServidor {
         return rutaActualizable;
     }
     static void enviarArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
-        try{
+        /*try{
             int total = recibir.readInt();
             File f;
             for(int i=0;i<total;i++){
@@ -86,10 +86,10 @@ public class IniciarServidor {
             }
         }catch(IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
     static void enviarDirectorio(File dir, DataInputStream recibir, DataOutputStream enviar){
-        try {
+        /*try {
             File[] f = dir.listFiles();
             int i,aux = f.length;
             enviar.writeUTF(dir.getName());
@@ -106,10 +106,10 @@ public class IniciarServidor {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     static void enviar(File f, DataInputStream recibir, DataOutputStream enviar){
-        String nombre,path;
+        /*String nombre,path;
         Long tam;
         DataInputStream dis;
         int enviados,l,porcentaje;
@@ -142,7 +142,7 @@ public class IniciarServidor {
             seguir = recibir.readBoolean();
         }catch(IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
     static void recibirArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
         try{

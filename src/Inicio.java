@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.layout.Border;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -59,8 +60,20 @@ public class Inicio extends javax.swing.JFrame {
         carpetasSeleccionadas = new ArrayList<String>();
         cargarArchivosyCarpetas();
     }
-    
-    
+    public void abrirCarpeta(String carp){
+        direccion.add(carp);
+        carpetaActual.setBorder(javax.swing.BorderFactory.createTitledBorder(null, ubicacion(), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30)));
+        getCarpyAr();
+        cargarArchivosyCarpetas();
+    }
+    public String ubicacion(){
+        int i,tam = direccion.size();
+        String ub = "Mi Unidad";
+        for(i=0;i<tam;i++){
+            ub = ub+" -> "+direccion.get(i);
+        }
+        return ub;
+    }
     private void cargarArchivosyCarpetas(){
         //Limpiar Panel
         MainPanel.removeAll();
@@ -85,8 +98,8 @@ public class Inicio extends javax.swing.JFrame {
             boton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("Abrir Carpeta: "+carpeta);
-                    //AGREGAR EL NOMBRE DE LA CARPETA A DIRECCION
+                    abrirCarpeta(carpeta);
+                    //System.out.println("Abrir Carpeta: "+carpeta);
                 }                
             });
             //Colocar el icono al boton del directorio
@@ -211,8 +224,10 @@ public class Inicio extends javax.swing.JFrame {
         int i,tam;
         tam = direccion.size();
         i = 0;
-        while(i<tam)
+        while(i<tam){
             dir = dir+direccion.get(i)+"\\";
+            i++;
+        }
         return dir;
     }
     
@@ -221,7 +236,7 @@ public class Inicio extends javax.swing.JFrame {
     private void initComponents() {
 
         salir = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        carpetaActual = new javax.swing.JScrollPane();
         MainPanel = new javax.swing.JPanel();
         subirArchivos = new javax.swing.JButton();
         regresar = new javax.swing.JButton();
@@ -240,10 +255,12 @@ public class Inicio extends javax.swing.JFrame {
             }
         });
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Mi Unidad", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30))); // NOI18N
+        carpetaActual.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Mi Unidad", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30))); // NOI18N
 
         MainPanel.setLayout(new java.awt.GridLayout(3, 0, 30, 30));
-        jScrollPane1.setViewportView(MainPanel);
+        carpetaActual.setViewportView(MainPanel);
+        MainPanel.getAccessibleContext().setAccessibleName("Mi Unidad");
+        MainPanel.getAccessibleContext().setAccessibleDescription("");
 
         subirArchivos.setText("Subir Archivos");
         subirArchivos.addActionListener(new java.awt.event.ActionListener() {
@@ -253,6 +270,11 @@ public class Inicio extends javax.swing.JFrame {
         });
 
         regresar.setText("Regresar");
+        regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setText("J-DRIVE");
@@ -300,7 +322,7 @@ public class Inicio extends javax.swing.JFrame {
                                 .addComponent(btnEliminar)
                                 .addGap(69, 69, 69)
                                 .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(carpetaActual, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -320,7 +342,7 @@ public class Inicio extends javax.swing.JFrame {
                             .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnDescargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+                .addComponent(carpetaActual, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(salir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -328,6 +350,8 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(subiendoArchivo))
                 .addContainerGap())
         );
+
+        carpetaActual.getAccessibleContext().setAccessibleName("Mi Unidad 2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -358,6 +382,8 @@ public class Inicio extends javax.swing.JFrame {
             boolean b = false;
             if(this.carpetasSeleccionadas.size()>0)
                 b = clt.eliminarCarpetas(carpetasSeleccionadas,dirActual());
+            else
+                b = true;
             if(b==false)
                 //Imprime error al eliminar carpetas
                 JOptionPane.showMessageDialog(null,"Ha habido un error al tratar de eliminar las carpetas seleccionadas, no se podra continuar con la operacion","Error",JOptionPane.INFORMATION_MESSAGE);
@@ -376,12 +402,22 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
+        /*if(this.archivosSeleccionados.size()>0)
+            clt.descargarArchivos(archivosSeleccionados,dirActual());
         if(this.carpetasSeleccionadas.size()>0)
             clt.descargarCarpetas(carpetasSeleccionadas,dirActual());
-        if(this.archivosSeleccionados.size()>0)
-            clt.descargarArchivos(archivosSeleccionados,dirActual());
         JOptionPane.showMessageDialog(null,"Operacion completada, los archivos y/o carpetas seleccionados se descargaron","Exito",JOptionPane.INFORMATION_MESSAGE);
+        */
     }//GEN-LAST:event_btnDescargarActionPerformed
+
+    private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
+        int i=direccion.size();
+        if(i>0)
+            this.direccion.remove(i-1);
+        carpetaActual.setBorder(javax.swing.BorderFactory.createTitledBorder(null, ubicacion(), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30)));
+        getCarpyAr();
+        cargarArchivosyCarpetas();
+    }//GEN-LAST:event_regresarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -422,8 +458,8 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JPanel MainPanel;
     private javax.swing.JButton btnDescargar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JScrollPane carpetaActual;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JProgressBar pbProgreso;
     private javax.swing.JButton regresar;
     private javax.swing.JButton salir;

@@ -54,7 +54,7 @@ public class Cliente {
     //Retorna un arreglo con nombre, si t='c' se estan solicitando carpetas, si t='a' se estan solicitando archivos
     ArrayList<String> getArray(char t, String dir){
         ArrayList<String> p = new ArrayList<String>();
-        System.out.println(dir);
+        //System.out.println(dir);
         try{
             int i,tamano;
             boolean seguir = false;
@@ -167,7 +167,7 @@ public class Cliente {
         descargar(archs,dir);
     }
     private void descargar(ArrayList<String> des, String dir){
-        try{
+        /*try{
             int i, tam=des.size();
             String nombre;
             long tamano;
@@ -176,7 +176,7 @@ public class Cliente {
             String carpeta="archivos2";
             String ruta_archivos = ruta+"\\"+carpeta+"\\";
             File f2 = new File(ruta_archivos);
-            f2.mkdirs();
+            f2.mkdir();
             f2.setWritable(true);
             enviar.writeChar('d');
             enviar.flush();
@@ -189,17 +189,17 @@ public class Cliente {
                 enviar.flush();
                 nombre = recibir.readUTF();
                 tamano = recibir.readLong();
-                if(tamano == 0)
-                    recibirDirectorio(nombre,ruta_archivos);
-                else
+                if(tamano > 0)
                     recibirArchivo(nombre,tamano,ruta_archivos);
+                else
+                    recibirDirectorio(nombre,ruta_archivos);
             }
         }catch(IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
     public void recibirArchivo(String nomb, long tam, String ruta_archivos){
-        try{
+        /*try{
             long recibidos;
             int l,porcentaje;
             DataOutputStream dos;
@@ -222,29 +222,29 @@ public class Cliente {
             enviar.writeBoolean(true);
         }catch(IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
     public void recibirDirectorio(String nomb, String ruta_archivos){
-        try{
+        /*try{
             int aux = recibir.readInt();
             long tam;
             String nombre;
             //Hacer el directorio
             File f2 = new File(ruta_archivos+"\\"+nomb+"\\");
-            f2.mkdirs();
+            f2.mkdir();
             f2.setWritable(true);
             while(aux>0){
                 nombre = recibir.readUTF();
                 tam = recibir.readLong();
-                if(tam==0){
-                    recibirDirectorio(nombre,ruta_archivos+"\\"+nomb+"\\");
+                if(tam>0){
+                    recibirArchivo(nombre,tam,ruta_archivos+"\\"+nomb);
                 }else{
-                    recibirArchivo(nombre,tam,ruta_archivos+"\\"+nomb+"\\");
+                    recibirDirectorio(nombre,ruta_archivos+"\\"+nomb);
                 }
                 aux-=1;
             }
         }catch(IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
 }
