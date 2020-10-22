@@ -11,9 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.layout.Border;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -41,7 +46,6 @@ public class Inicio extends javax.swing.JFrame {
     private ArrayList<String> archivosSeleccionados;
     private ArrayList<String> carpetasSeleccionadas;
     
-    
     public Inicio() {
         clt = new Cliente();
         //A direccion se anadira un nombre de carpeta cuando piquemos sobre cualquier carpeta
@@ -52,14 +56,12 @@ public class Inicio extends javax.swing.JFrame {
         carpetas = clt.getCarpetas("");
         archivos = clt.getArchivos("");
         initComponents();
-        this.pbProgreso.setValue(clt.getPorcentaje());
-        this.subiendoArchivo.setText(clt.getArchivo());
-        pbProgreso.setStringPainted(true);
         //A archivosSeleccionados se le insertaran los nombres de los archivos que se marquen con chekbox
         archivosSeleccionados = new ArrayList<String>();
         carpetasSeleccionadas = new ArrayList<String>();
         cargarArchivosyCarpetas();
     }
+    
     public void abrirCarpeta(String carp){
         direccion.add(carp);
         carpetaActual.setBorder(javax.swing.BorderFactory.createTitledBorder(null, ubicacion(), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 30)));
@@ -241,10 +243,8 @@ public class Inicio extends javax.swing.JFrame {
         subirArchivos = new javax.swing.JButton();
         regresar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        subiendoArchivo = new javax.swing.JLabel();
         btnDescargar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
-        pbProgreso = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -279,8 +279,6 @@ public class Inicio extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setText("J-DRIVE");
 
-        subiendoArchivo.setText("Nombre Archivo.ext");
-
         btnDescargar.setText("Descargar");
         btnDescargar.setToolTipText("");
         btnDescargar.addActionListener(new java.awt.event.ActionListener() {
@@ -301,28 +299,20 @@ public class Inicio extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pbProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(subiendoArchivo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(salir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(regresar)
-                                .addGap(85, 85, 85)
-                                .addComponent(jLabel1)
-                                .addGap(543, 543, 543)
-                                .addComponent(btnDescargar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnEliminar)
-                                .addGap(69, 69, 69)
-                                .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(carpetaActual, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(regresar)
+                        .addGap(85, 85, 85)
+                        .addComponent(jLabel1)
+                        .addGap(543, 543, 543)
+                        .addComponent(btnDescargar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEliminar)
+                        .addGap(69, 69, 69)
+                        .addComponent(subirArchivos, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(carpetaActual, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -344,10 +334,7 @@ public class Inicio extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(carpetaActual, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(salir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pbProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(subiendoArchivo))
+                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -402,12 +389,11 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
-        /*if(this.archivosSeleccionados.size()>0)
+        if(this.archivosSeleccionados.size()>0)
             clt.descargarArchivos(archivosSeleccionados,dirActual());
         if(this.carpetasSeleccionadas.size()>0)
             clt.descargarCarpetas(carpetasSeleccionadas,dirActual());
         JOptionPane.showMessageDialog(null,"Operacion completada, los archivos y/o carpetas seleccionados se descargaron","Exito",JOptionPane.INFORMATION_MESSAGE);
-        */
     }//GEN-LAST:event_btnDescargarActionPerformed
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
@@ -460,10 +446,8 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JScrollPane carpetaActual;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JProgressBar pbProgreso;
     private javax.swing.JButton regresar;
     private javax.swing.JButton salir;
-    private javax.swing.JLabel subiendoArchivo;
     private javax.swing.JButton subirArchivos;
     // End of variables declaration//GEN-END:variables
 }

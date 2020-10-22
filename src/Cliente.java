@@ -1,22 +1,17 @@
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-public class Cliente {
-    
+public class Cliente{
     //jk
     Socket cl;
     DataOutputStream enviar;
     DataInputStream recibir;
-    Boolean auxil;
-    int porcentaje;
-    String archivo;
-    
     public Cliente(){
-        auxil = false;
-        porcentaje = 0;
-        archivo = "";
         iniciarCliente();
     }
     void iniciarCliente(){
@@ -28,7 +23,7 @@ public class Cliente {
             enviar = new DataOutputStream(cl.getOutputStream());
             recibir = new DataInputStream(cl.getInputStream());
             //cl.close();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -39,7 +34,7 @@ public class Cliente {
             cl.close();
             recibir.close();
             enviar.close();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -73,28 +68,23 @@ public class Cliente {
             for(i=0;i<tamano;i++){
                 p.add(recibir.readUTF());
             }
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         return p;
     }
-    public String getArchivo(){
-        return this.archivo;
-    }
-    public int getPorcentaje(){
-        return this.porcentaje;
-    }
-    public boolean getAuxil(){
-        return this.auxil;
-    }
     public void subirArchivosyCarpetas(File[] f, String dir){
         try{
-            auxil = true;
+            //JOptionPane.showMessageDialog(null,"Prueba","Exito",JOptionPane.INFORMATION_MESSAGE);
             DataInputStream dis;
             String nombre;
             String path;
             long tam, enviados;
-            int i,l,aux;
+            int i,l,aux,porcentaje=0;
+            File arch;
+            FileWriter w;
+            BufferedWriter bw;
+            PrintWriter wr;
             boolean seguir = false;
             enviar.writeChar('s');
             enviar.flush();
@@ -129,8 +119,7 @@ public class Cliente {
                 dis.close();
                 seguir = recibir.readBoolean();
             }
-            auxil = false;
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -155,7 +144,7 @@ public class Cliente {
                 enviar.flush();
             }
             b = recibir.readBoolean();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         return b;
@@ -167,7 +156,7 @@ public class Cliente {
         descargar(archs,dir);
     }
     private void descargar(ArrayList<String> des, String dir){
-        /*try{
+        try{
             int i, tam=des.size();
             String nombre;
             long tamano;
@@ -189,21 +178,21 @@ public class Cliente {
                 enviar.flush();
                 nombre = recibir.readUTF();
                 tamano = recibir.readLong();
-                if(tamano > 0)
-                    recibirArchivo(nombre,tamano,ruta_archivos);
-                else
+                if(tamano == 0)
                     recibirDirectorio(nombre,ruta_archivos);
+                else
+                    recibirArchivo(nombre,tamano,ruta_archivos);
             }
         }catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
     public void recibirArchivo(String nomb, long tam, String ruta_archivos){
-        /*try{
+        try{
             long recibidos;
             int l,porcentaje;
             DataOutputStream dos;
-            //System.out.println("\nComienza descarga del archivo "+nomb+" de "+tam+" bytes");
+            System.out.println("\nComienza descarga del archivo "+nomb+" de "+tam+" bytes");
             dos = new DataOutputStream(new FileOutputStream(ruta_archivos+"\\"+nomb));
             recibidos=0;
             l=0;
@@ -212,20 +201,21 @@ public class Cliente {
                 byte[] b = new byte[1500];
                 l = recibir.read(b);
                 dos.write(b,0,l);
+                System.out.print("\nEnviados: "+l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                //System.out.print(", recibido el "+ porcentaje +" % del archivo");
+                System.out.println(", recibido el "+ porcentaje +" % del archivo");
             }//while
-            //System.out.println("Archivo recibido..");
+            System.out.println("Archivo recibido..");
             dos.close();
             enviar.writeBoolean(true);
         }catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
     public void recibirDirectorio(String nomb, String ruta_archivos){
-        /*try{
+        try{
             int aux = recibir.readInt();
             long tam;
             String nombre;
@@ -236,15 +226,15 @@ public class Cliente {
             while(aux>0){
                 nombre = recibir.readUTF();
                 tam = recibir.readLong();
-                if(tam>0){
-                    recibirArchivo(nombre,tam,ruta_archivos+"\\"+nomb);
-                }else{
+                if(tam==0)
                     recibirDirectorio(nombre,ruta_archivos+"\\"+nomb);
-                }
+                else
+                    recibirArchivo(nombre,tam,ruta_archivos+"\\"+nomb);
+                
                 aux-=1;
             }
         }catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
 }

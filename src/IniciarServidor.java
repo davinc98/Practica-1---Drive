@@ -55,7 +55,6 @@ public class IniciarServidor {
                 }
               }
           }//for
-          
       }catch(Exception e){
           e.printStackTrace();
       }  
@@ -73,7 +72,7 @@ public class IniciarServidor {
         return rutaActualizable;
     }
     static void enviarArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
-        /*try{
+        try{
             int total = recibir.readInt();
             File f;
             for(int i=0;i<total;i++){
@@ -86,10 +85,10 @@ public class IniciarServidor {
             }
         }catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
     static void enviarDirectorio(File dir, DataInputStream recibir, DataOutputStream enviar){
-        /*try {
+        try {
             File[] f = dir.listFiles();
             int i,aux = f.length;
             enviar.writeUTF(dir.getName());
@@ -106,10 +105,10 @@ public class IniciarServidor {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
     static void enviar(File f, DataInputStream recibir, DataOutputStream enviar){
-        /*String nombre,path;
+        String nombre,path;
         Long tam;
         DataInputStream dis;
         int enviados,l,porcentaje;
@@ -130,19 +129,19 @@ public class IniciarServidor {
             while(enviados<tam){
                 byte[] b = new byte[1500];
                 l=dis.read(b);
-                //System.out.print("\nEnviados: "+l);
+                System.out.print("\nEnviados: "+l);
                 enviar.write(b,0,l);
                 enviar.flush();
                 enviados = enviados + l;
                 porcentaje = (int)((enviados*100)/tam);
-                //System.out.println(", enviado el "+porcentaje+" % del archivo "+nombre);
+                System.out.println(", enviado el "+porcentaje+" % del archivo "+nombre);
             }//while
             System.out.println("Archivo "+nombre+" enviado...");
             dis.close();//Aquí usamos flujos y Sockets bloqueantes, por ello los tenemos que cerrar
             seguir = recibir.readBoolean();
         }catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
     static void recibirArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
         try{
@@ -160,6 +159,7 @@ public class IniciarServidor {
                 porcentaje=0;//l es para saber cuandos bytes se leyeron en el Socket
                 while(recibidos<tam){
                     byte[] b = new byte[1500];
+                    
                     l = recibir.read(b);
                     //System.out.print("\nLeidos: "+l);
                     dos.write(b,0,l);
