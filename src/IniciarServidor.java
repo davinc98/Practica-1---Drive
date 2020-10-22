@@ -75,6 +75,9 @@ public class IniciarServidor {
             
             rutaActualizable = recibir.readUTF();
             System.out.println("Direccion recuperada: "+rutaActualizable);
+            
+            //AQUI CREAR LA NUEVA CARPETA DENTRO DEL SERVIDOR
+            
             rutaActualizable = ruta_archivos+rutaActualizable;
             //System.out.println("Direccion del recurso solicitado: "+rutaActualizable);
         } catch (IOException e) {
@@ -161,9 +164,7 @@ public class IniciarServidor {
             long recibidos;
             int l,porcentaje;
             DataOutputStream dos;
-            
-            System.out.println("CarpetaXXX: "+rutaActualizable);
-            
+                        
             while(aux>0){
                 String nombre = recibir.readUTF();
                 long tam = recibir.readLong();
@@ -189,7 +190,7 @@ public class IniciarServidor {
                 aux -= 1;
                 enviar.writeBoolean(true);
             }
-            enviar.writeBoolean(true);//================================
+            
         }catch(IOException e){
             e.printStackTrace();
         }

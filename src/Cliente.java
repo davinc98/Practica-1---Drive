@@ -78,8 +78,6 @@ public class Cliente{
         
         try{
             
-            
-
             DataInputStream dis;
             String nombre;
             String path;
@@ -109,17 +107,7 @@ public class Cliente{
                 tam = f[i].length();
 
                 if(f[i].isDirectory()){
-//                    System.out.println("Carpeta encontrada: "+f[i].getPath());
                     System.out.println("Carpeta "+f[i].getName()+" en espera...");
-//                    
-//                    File[] ff = f[i].listFiles(); 
-//                    
-//                    for(int h=0;h<ff.length;h++){
-//                        if(ff[h].isDirectory())
-//                            System.out.println("\tCarpeta: "+ff[h].getName());
-//                        else
-//                            System.out.println("\tArchivo: "+ff[h].getName());
-//                    }      
                     continue;
                 }
                 
@@ -162,7 +150,7 @@ public class Cliente{
                         else
                             System.out.println("\tArchivo: "+ff[h].getName());
                     }  
-                    subirArchivosyCarpetas(ff, f[i].getName());
+                    subirArchivosyCarpetas(ff, f[i].getName());//Envio nombre de la carpeta
                 }
             }            
             
