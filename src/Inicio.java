@@ -349,16 +349,26 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_salirActionPerformed
 
     private void subirArchivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subirArchivosActionPerformed
+        
         String dir = dirActual();
         JFileChooser jf = new JFileChooser();
-        jf.setMultiSelectionEnabled(true);//Para varios archivos
-        int r = jf.showOpenDialog(null);
-        //jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        //jf.setAcceptAllFileFilterUsed(false);
+        jf.setMultiSelectionEnabled(true);
+        jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        int r = jf.showOpenDialog(null);        
+        
         if(r==JFileChooser.APPROVE_OPTION){
             File[] f = jf.getSelectedFiles();//, pero también necesitamos un arreglo de nombres, direcciones y de largos, además de necesitar enviar archivo por archivo y ¿cómo mandar carpetas?
+            
+//            int tam = f.length;
+//            for(int i=0;i<tam;i++){
+//                
+//            }
+            
+            
+            
             clt.subirArchivosyCarpetas(f,dir);
-        }//if
+        }
+        
         this.getCarpyAr();
         cargarArchivosyCarpetas();
     }//GEN-LAST:event_subirArchivosActionPerformed
@@ -452,33 +462,3 @@ public class Inicio extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 }
 
-/*CONSULTAS
-    http://www.sc.ehu.es/sbweb/fisica/cursoJava/applets/diseno/flow.htm
-    https://es.stackoverflow.com/questions/130285/cambiar-tama%C3%B1o-o-estilo-de-botones-java
-
-*/
-
-
-        
-        /*EJEMPLO
-        ImageIcon imagen = new ImageIcon("folder.png");
-        JButton bt_Votar = new JButton("Votar");
-	JTextField campoVotos =new JTextField();
-	JTextField campoPorcentaje = new JTextField();
-        
-        JPanel subPanel = new JPanel();
-        
-	subPanel.setPreferredSize(new Dimension(30, 110));
-	GridLayout layoutGrid = new GridLayout(4, 1);
-	layoutGrid.setVgap(5);        
-	subPanel.setLayout(layoutGrid);
-        
-	subPanel.add(bt_Votar);
-	subPanel.add(campoVotos);
-	subPanel.add(campoPorcentaje);
-
-	JPanel panelImagen = new JPanel();
-	panelImagen.add(new JLabel(imagen));
-	subPanel.add(panelImagen);   
-        
-        MainPanel.add(subPanel);*/

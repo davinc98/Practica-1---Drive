@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -74,8 +75,11 @@ public class Cliente{
         return p;
     }
     public void subirArchivosyCarpetas(File[] f, String dir){
+        
         try{
-            //JOptionPane.showMessageDialog(null,"Prueba","Exito",JOptionPane.INFORMATION_MESSAGE);
+            
+            
+
             DataInputStream dis;
             String nombre;
             String path;
@@ -85,40 +89,83 @@ public class Cliente{
             FileWriter w;
             BufferedWriter bw;
             PrintWriter wr;
+            
             boolean seguir = false;
             enviar.writeChar('s');
+            enviar.flush(); 
+            
+            System.out.println("Directorio: "+dir);
+            enviar.writeUTF(dir);//Enviar la ruta de los archivos
             enviar.flush();
-            enviar.writeUTF(dir);
-            enviar.flush();
+                        
             aux = f.length;
             enviar.writeInt(aux);
             enviar.flush();
+            
+            
             for(i=0;i<aux;i++){
                 nombre = f[i].getName();
                 path = f[i].getAbsolutePath();
                 tam = f[i].length();
-                //System.out.println("\nPreparandose pare enviar archivo "+path+" de "+tam+" bytes");
-                dis = new DataInputStream(new FileInputStream(path));
-                enviar.writeUTF(nombre);
-                enviar.flush();
-                enviar.writeLong(tam);
-                enviar.flush();
-                enviados = 0;
-                l=0;
-                porcentaje=0;
-                while(enviados<tam){
-                    byte[] b = new byte[1500];
-                    l=dis.read(b);
-                    enviar.write(b,0,l);
+
+                if(f[i].isDirectory()){
+//                    System.out.println("Carpeta encontrada: "+f[i].getPath());
+                    System.out.println("Carpeta "+f[i].getName()+" en espera...");
+//                    
+//                    File[] ff = f[i].listFiles(); 
+//                    
+//                    for(int h=0;h<ff.length;h++){
+//                        if(ff[h].isDirectory())
+//                            System.out.println("\tCarpeta: "+ff[h].getName());
+//                        else
+//                            System.out.println("\tArchivo: "+ff[h].getName());
+//                    }      
+                    continue;
+                }
+                
+                    System.out.println("\nPreparandose pare enviar archivo "+path+" de "+tam+" bytes");
+                    
+                    dis = new DataInputStream(new FileInputStream(path));
+                    enviar.writeUTF(nombre);
                     enviar.flush();
-                    enviados = enviados + l;
-                    porcentaje = (int)((enviados*100)/tam);
-                    //System.out.print(", enviado el "+porcentaje+" % del archivo "+nombre[i]);
-                }//while
-                //System.out.println("Archivo "+nombre+" enviado...");
-                dis.close();
+                    enviar.writeLong(tam);
+                    enviar.flush();
+                    
+                    enviados = 0; l=0;
+                    porcentaje=0;
+                    
+                    while(enviados<tam){
+                        byte[] b = new byte[1500];
+                        l=dis.read(b);
+                        enviar.write(b,0,l);
+                        enviar.flush();
+                        enviados = enviados + l;
+                        porcentaje = (int)((enviados*100)/tam);
+                        System.out.println(",enviado el "+porcentaje+" % del archivo "+nombre);
+                    }//while
+                    System.out.println("Archivo "+nombre+" enviado...");
+                    dis.close();
+                
                 seguir = recibir.readBoolean();
             }
+                       
+            
+            //FUNCION RECURSIVA A ENVIAR ARCHIVOS RESTANTES
+            for(i=0;i<aux;i++){                 
+                if(f[i].isDirectory()){
+                    System.out.println("Subiendo archivos de "+f[i].getName());
+
+                    File[] ff = f[i].listFiles(); 
+                    for(int h=0;h<ff.length;h++){
+                        if(ff[h].isDirectory())
+                            System.out.println("\tCarpeta: "+ff[h].getName());
+                        else
+                            System.out.println("\tArchivo: "+ff[h].getName());
+                    }  
+                    subirArchivosyCarpetas(ff, f[i].getName());
+                }
+            }            
+            
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -12,13 +12,18 @@ public class IniciarServidor {
           s.setReuseAddress(true);
           System.out.println("Servidor iniciado esperando por archivos..");
           File f = new File("");
+          
           String ruta = f.getAbsolutePath();
           String carpeta="archivos";
+          
           String ruta_archivos = ruta+"\\"+carpeta+"\\";
-          System.out.println("ruta:"+ruta_archivos);
+          System.out.println("Ruta:"+ruta_archivos);
+          
           File f2 = new File(ruta_archivos);
+          
           f2.mkdirs();//Haces la dirección, mkdir te hace un nivel de directorio, el mkdirs te hace todas las estructuras de directorio, aquí se pudo haber ocupado solo mkdir
           f2.setWritable(true);//Das permisos de escritura
+          
           for(;;){
               Socket cl = s.accept();
               System.out.println("Cliente conectado desde "+cl.getInetAddress()+":"+cl.getPort());
@@ -27,8 +32,9 @@ public class IniciarServidor {
               String rutaActualizable = "";
               DataInputStream recibir = new DataInputStream(cl.getInputStream());
               DataOutputStream enviar = new DataOutputStream(cl.getOutputStream());
+                          
               while(terminar==false){
-                opcion = recibir.readChar();
+                opcion = recibir.readChar();                
                 //System.out.println(opcion);
                 switch(opcion){
                     case 'c':
@@ -51,6 +57,7 @@ public class IniciarServidor {
                         recibir.close();
                         enviar.close();
                         cl.close();
+                        System.out.println("Conexion cerrada.");
                         break;
                 }
               }
@@ -59,15 +66,20 @@ public class IniciarServidor {
           e.printStackTrace();
       }  
     }//main
+    
+
     //Nos retorna la ruta en que se encuentra el cliente
     static private String dirCliente(String ruta_archivos, DataInputStream recibir){
         String rutaActualizable = "";
         try {
+            
             rutaActualizable = recibir.readUTF();
+            System.out.println("Direccion recuperada: "+rutaActualizable);
             rutaActualizable = ruta_archivos+rutaActualizable;
             //System.out.println("Direccion del recurso solicitado: "+rutaActualizable);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Error al obtener la ruta nueva.");
         }
         return rutaActualizable;
     }
@@ -149,10 +161,14 @@ public class IniciarServidor {
             long recibidos;
             int l,porcentaje;
             DataOutputStream dos;
+            
+            System.out.println("CarpetaXXX: "+rutaActualizable);
+            
             while(aux>0){
                 String nombre = recibir.readUTF();
                 long tam = recibir.readLong();
                 System.out.println("\nComienza descarga del archivo "+nombre+" de "+tam+" bytes");
+               
                 dos = new DataOutputStream(new FileOutputStream(rutaActualizable+nombre));
                 recibidos=0;
                 l=0;
@@ -173,6 +189,7 @@ public class IniciarServidor {
                 aux -= 1;
                 enviar.writeBoolean(true);
             }
+            enviar.writeBoolean(true);//================================
         }catch(IOException e){
             e.printStackTrace();
         }
