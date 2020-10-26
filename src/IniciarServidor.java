@@ -74,7 +74,7 @@ public class IniciarServidor {
         try {
             
             rutaActualizable = recibir.readUTF();
-            System.out.println("Direccion recuperada: "+rutaActualizable);
+            //System.out.println("Direccion recuperada: "+rutaActualizable);
             
             //AQUI CREAR LA NUEVA CARPETA DENTRO DEL SERVIDOR
             
@@ -161,36 +161,65 @@ public class IniciarServidor {
     static void recibirArchivos(String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
         try{
             int aux = recibir.readInt();
-            long recibidos;
-            int l,porcentaje;
-            DataOutputStream dos;
-                        
+            String nombre;
+            long tam;
             while(aux>0){
-                String nombre = recibir.readUTF();
-                long tam = recibir.readLong();
-                System.out.println("\nComienza descarga del archivo "+nombre+" de "+tam+" bytes");
-               
-                dos = new DataOutputStream(new FileOutputStream(rutaActualizable+nombre));
-                recibidos=0;
-                l=0;
-                porcentaje=0;//l es para saber cuandos bytes se leyeron en el Socket
-                while(recibidos<tam){
-                    byte[] b = new byte[1500];
-                    
-                    l = recibir.read(b);
-                    //System.out.print("\nLeidos: "+l);
-                    dos.write(b,0,l);
-                    dos.flush();
-                    recibidos = recibidos + l;
-                    porcentaje = (int)((recibidos*100)/tam);
-                    //System.out.print(", recibido el "+ porcentaje +" % del archivo");
-                }//while
-                System.out.println("Archivo recibido..");
-                dos.close();
+                nombre = recibir.readUTF();
+                tam = recibir.readLong();
+                if(tam==0)
+                    recibirDirectorio(nombre,rutaActualizable,recibir,enviar);//Es directorio
+                else
+                    recibirArchivo(nombre,rutaActualizable,recibir,enviar,tam);//Es archivo
                 aux -= 1;
-                enviar.writeBoolean(true);
             }
-            
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    static void recibirArchivo(String nombre, String rutaActualizable, DataInputStream recibir, DataOutputStream enviar, long tam){
+        long recibidos;
+        int l,porcentaje;
+        try{
+            System.out.println("\nComienza descarga del archivo "+nombre+" de "+tam+" bytes");
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(rutaActualizable+"\\"+nombre));
+            recibidos=0;
+            l=0;
+            porcentaje=0;//l es para saber cuandos bytes se leyeron en el Socket
+            while(recibidos<tam){
+                byte[] b = new byte[1500];
+                l = recibir.read(b);
+                //System.out.print("\nLeidos: "+l);
+                dos.write(b,0,l);
+                dos.flush();
+                recibidos = recibidos + l;
+                porcentaje = (int)((recibidos*100)/tam);
+                //System.out.print(", recibido el "+ porcentaje +" % del archivo");
+            }//while
+            System.out.println("Archivo recibido..");
+            dos.close();
+            enviar.writeBoolean(true);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    static void recibirDirectorio(String nombre, String rutaActualizable, DataInputStream recibir, DataOutputStream enviar){
+        try{
+            int aux = recibir.readInt();
+            long tam;
+            String nomb;
+            //Hacer el directorio
+            File f2 = new File(rutaActualizable+"\\"+nombre+"\\");
+            f2.mkdir();
+            f2.setWritable(true);
+            while(aux>0){
+                nomb = recibir.readUTF();
+                tam = recibir.readLong();
+                if(tam==0)
+                    recibirDirectorio(nomb,rutaActualizable+"\\"+nombre,recibir,enviar);
+                else
+                    recibirArchivo(nomb,rutaActualizable+"\\"+nombre,recibir,enviar,tam);
+                aux-=1;
+            }
         }catch(IOException e){
             e.printStackTrace();
         }

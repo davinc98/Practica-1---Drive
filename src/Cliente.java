@@ -74,10 +74,85 @@ public class Cliente{
         }
         return p;
     }
-    public void subirArchivosyCarpetas(File[] f, String dir){
-        
+    public void enviar(File f){
+        String nombre,path;
+        Long tam;
+        DataInputStream dis;
+        int enviados,l,porcentaje;
+        boolean seguir;
         try{
-            
+            nombre = f.getName();
+            path = f.getAbsolutePath();
+            tam = f.length();
+            System.out.println("\nPreparandose pare enviar archivo "+path+" de "+tam+" bytes");
+            dis = new DataInputStream(new FileInputStream(path));
+            enviar.writeUTF(nombre);
+            enviar.flush();
+            enviar.writeLong(tam);
+            enviar.flush();
+            enviados = 0;
+            l=0;
+            porcentaje=0;
+            while(enviados<tam){
+                byte[] b = new byte[1500];
+                l=dis.read(b);
+                System.out.print("\nEnviados: "+l);
+                enviar.write(b,0,l);
+                enviar.flush();
+                enviados = enviados + l;
+                porcentaje = (int)((enviados*100)/tam);
+                System.out.println(", enviado el "+porcentaje+" % del archivo "+nombre);
+            }//while
+            System.out.println("Archivo "+nombre+" enviado...");
+            dis.close();//Aquí usamos flujos y Sockets bloqueantes, por ello los tenemos que cerrar
+            seguir = recibir.readBoolean();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void enviarDirectorio(File dir){
+        try {
+            File[] f = dir.listFiles();
+            int i,aux = f.length;
+            enviar.writeUTF(dir.getName());
+            enviar.flush();
+            enviar.writeLong(0);
+            enviar.flush();
+            enviar.writeInt(aux);
+            for(i=0;i<aux;i++){
+                if(f[i].isDirectory()){
+                    enviarDirectorio(f[i]);
+                }else{
+                    enviar(f[i]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void subirArchivosyCarpetas(File[] f, String dir){
+        try{
+            long tam, enviados;
+            int i,l,aux,porcentaje=0;
+            boolean seguir = false;
+            enviar.writeChar('s');
+            enviar.flush();
+            enviar.writeUTF(dir);//Enviar la ruta de los archivos
+            enviar.flush();
+            aux = f.length;
+            enviar.writeInt(aux);
+            enviar.flush();
+            for(i=0;i<aux;i++){
+                if(f[i].isDirectory()==false){
+                    enviar(f[i]);
+                }else{
+                    enviarDirectorio(f[i]);
+                }
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        /*try{
             DataInputStream dis;
             String nombre;
             String path;
@@ -157,6 +232,7 @@ public class Cliente{
         }catch(Exception e){
             e.printStackTrace();
         }
+    */
     }
     public boolean eliminarCarpetas(ArrayList<String> carps, String dir){
         return eliminar(carps,dir);
@@ -236,7 +312,7 @@ public class Cliente{
                 byte[] b = new byte[1500];
                 l = recibir.read(b);
                 dos.write(b,0,l);
-                System.out.print("\nEnviados: "+l);
+                System.out.print("\nRecibidos: "+l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
