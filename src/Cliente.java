@@ -13,7 +13,6 @@ public class Cliente{
     DataOutputStream enviar;
     DataInputStream recibir;
     public Cliente(){
-        iniciarCliente();
     }
     void iniciarCliente(){
         try{
@@ -30,8 +29,6 @@ public class Cliente{
     }
     void salir(){
         try{
-            enviar.writeChar('t');
-            enviar.flush();
             cl.close();
             recibir.close();
             enviar.close();
@@ -51,6 +48,7 @@ public class Cliente{
     ArrayList<String> getArray(char t, String dir){
         ArrayList<String> p = new ArrayList<String>();
         //System.out.println(dir);
+        iniciarCliente();
         try{
             int i,tamano;
             boolean seguir = false;
@@ -72,6 +70,7 @@ public class Cliente{
         }catch(Exception e){
             e.printStackTrace();
         }
+        salir();
         return p;
     }
     public void enviar(File f){
@@ -131,6 +130,7 @@ public class Cliente{
         }
     }
     public void subirArchivosyCarpetas(File[] f, String dir){
+        iniciarCliente();
         try{
             long tam, enviados;
             int i,l,aux,porcentaje=0;
@@ -152,87 +152,7 @@ public class Cliente{
         }catch(IOException e){
             e.printStackTrace();
         }
-        /*try{
-            DataInputStream dis;
-            String nombre;
-            String path;
-            long tam, enviados;
-            int i,l,aux,porcentaje=0;
-            File arch;
-            FileWriter w;
-            BufferedWriter bw;
-            PrintWriter wr;
-            
-            boolean seguir = false;
-            enviar.writeChar('s');
-            enviar.flush(); 
-            
-            System.out.println("Directorio: "+dir);
-            enviar.writeUTF(dir);//Enviar la ruta de los archivos
-            enviar.flush();
-                        
-            aux = f.length;
-            enviar.writeInt(aux);
-            enviar.flush();
-            
-            
-            for(i=0;i<aux;i++){
-                nombre = f[i].getName();
-                path = f[i].getAbsolutePath();
-                tam = f[i].length();
-
-                if(f[i].isDirectory()){
-                    System.out.println("Carpeta "+f[i].getName()+" en espera...");
-                    continue;
-                }
-                
-                    System.out.println("\nPreparandose pare enviar archivo "+path+" de "+tam+" bytes");
-                    
-                    dis = new DataInputStream(new FileInputStream(path));
-                    enviar.writeUTF(nombre);
-                    enviar.flush();
-                    enviar.writeLong(tam);
-                    enviar.flush();
-                    
-                    enviados = 0; l=0;
-                    porcentaje=0;
-                    
-                    while(enviados<tam){
-                        byte[] b = new byte[1500];
-                        l=dis.read(b);
-                        enviar.write(b,0,l);
-                        enviar.flush();
-                        enviados = enviados + l;
-                        porcentaje = (int)((enviados*100)/tam);
-                        System.out.println(",enviado el "+porcentaje+" % del archivo "+nombre);
-                    }//while
-                    System.out.println("Archivo "+nombre+" enviado...");
-                    dis.close();
-                
-                seguir = recibir.readBoolean();
-            }
-                       
-            
-            //FUNCION RECURSIVA A ENVIAR ARCHIVOS RESTANTES
-            for(i=0;i<aux;i++){                 
-                if(f[i].isDirectory()){
-                    System.out.println("Subiendo archivos de "+f[i].getName());
-
-                    File[] ff = f[i].listFiles(); 
-                    for(int h=0;h<ff.length;h++){
-                        if(ff[h].isDirectory())
-                            System.out.println("\tCarpeta: "+ff[h].getName());
-                        else
-                            System.out.println("\tArchivo: "+ff[h].getName());
-                    }  
-                    subirArchivosyCarpetas(ff, f[i].getName());//Envio nombre de la carpeta
-                }
-            }            
-            
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    */
+        salir();
     }
     public boolean eliminarCarpetas(ArrayList<String> carps, String dir){
         return eliminar(carps,dir);
@@ -241,6 +161,7 @@ public class Cliente{
         return eliminar(archs,dir);
     }
     private boolean eliminar(ArrayList<String> elim, String dir){
+        iniciarCliente();
         boolean b = false;
         try{
             int i, tam=elim.size();
@@ -258,6 +179,7 @@ public class Cliente{
         }catch(Exception e){
             e.printStackTrace();
         }
+        salir();
         return b;
     }
     public void descargarCarpetas(ArrayList<String> carps, String dir){
@@ -267,6 +189,7 @@ public class Cliente{
         descargar(archs,dir);
     }
     private void descargar(ArrayList<String> des, String dir){
+        iniciarCliente();
         try{
             int i, tam=des.size();
             String nombre;
@@ -297,6 +220,7 @@ public class Cliente{
         }catch(IOException e){
             e.printStackTrace();
         }
+        salir();
     }
     public void recibirArchivo(String nomb, long tam, String ruta_archivos){
         try{

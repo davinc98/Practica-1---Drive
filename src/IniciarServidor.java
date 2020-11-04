@@ -27,40 +27,34 @@ public class IniciarServidor {
           for(;;){
               Socket cl = s.accept();
               System.out.println("Cliente conectado desde "+cl.getInetAddress()+":"+cl.getPort());
-              boolean terminar=false;
               char opcion=0;
               String rutaActualizable = "";
               DataInputStream recibir = new DataInputStream(cl.getInputStream());
               DataOutputStream enviar = new DataOutputStream(cl.getOutputStream());
                           
-              while(terminar==false){
-                opcion = recibir.readChar();                
-                //System.out.println(opcion);
-                switch(opcion){
-                    case 'c':
-                        enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
-                        break;
-                    case 'a':
-                        enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
-                        break;
-                    case 's'://Subir Archivos
-                        recibirArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
-                        break;
-                    case 'e':
-                        eliminar(dirCliente(ruta_archivos,recibir),recibir,enviar);
-                        break;
-                    case 'd':
-                        enviarArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
-                        break;
-                    case 't':
-                        terminar = true;
-                        recibir.close();
-                        enviar.close();
-                        cl.close();
-                        System.out.println("Conexion cerrada.");
-                        break;
-                }
+              opcion = recibir.readChar();                
+              //System.out.println(opcion);
+              switch(opcion){
+                  case 'c':
+                      enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
+                      break;
+                  case 'a':
+                      enviarNombres(cl,dirCliente(ruta_archivos,recibir),opcion,enviar);
+                      break;
+                  case 's'://Subir Archivos
+                      recibirArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
+                      break;
+                  case 'e':
+                      eliminar(dirCliente(ruta_archivos,recibir),recibir,enviar);
+                      break;
+                  case 'd':
+                      enviarArchivos(dirCliente(ruta_archivos,recibir),recibir,enviar);
+                      break;
               }
+              recibir.close();
+              enviar.close();
+              cl.close();
+              System.out.println("Conexion cerrada.");
           }//for
       }catch(Exception e){
           e.printStackTrace();
